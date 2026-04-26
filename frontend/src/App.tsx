@@ -36,6 +36,8 @@ const MAX_VIDEO_UPLOAD_BYTES = MAX_VIDEO_UPLOAD_MB * 1024 * 1024
 const DEVICE_ID_KEY = 'voicedance_device_id'
 const ONCE_FLAGS_KEY_PREFIX = 'voicedance_once_flags_'
 const SPEED_PRESETS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '')
+const ANALYZE_VIDEO_URL = API_BASE_URL ? `${API_BASE_URL}/analyze-video` : '/api/analyze-video'
 
 /** 解析八拍分析接口失败时的响应体（兼容 FastAPI detail / 其它 message 字段与纯文本） */
 function parseAnalyzeErrorResponse(res: Response, raw: string): string {
@@ -466,7 +468,7 @@ function App() {
         formData.append('file', videoFile)
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 180000)
-        const res = await fetch('/api/analyze-video', {
+        const res = await fetch(ANALYZE_VIDEO_URL, {
           method: 'POST',
           body: formData,
           signal: controller.signal,
