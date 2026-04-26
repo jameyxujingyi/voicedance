@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>视频库 - 上传失败 (格式错误) - 最终版</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&amp;family=Noto+Sans+SC:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary": "#5f5e60",
+                    "tertiary-fixed": "#e2e2e4",
+                    "surface-bright": "#fcf8fb",
+                    "on-tertiary-fixed": "#1a1c1d",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#005bc1",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-secondary-fixed": "#1b1b1d",
+                    "tertiary-container": "#737576",
+                    "on-secondary-container": "#636264",
+                    "on-primary-fixed": "#001a41",
+                    "surface-container-low": "#f6f3f5",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#e2dfe1",
+                    "surface": "#fcf8fb",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#adc6ff",
+                    "inverse-primary": "#adc6ff",
+                    "on-tertiary-container": "#fcfcfe",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#dcd9dc",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f3f0f2",
+                    "tertiary-fixed-dim": "#c6c6c8",
+                    "outline-variant": "#c1c6d7",
+                    "on-background": "#1b1b1d",
+                    "secondary-fixed": "#e4e2e4",
+                    "inverse-surface": "#303032",
+                    "background": "#fcf8fb",
+                    "on-tertiary": "#ffffff",
+                    "on-surface": "#1b1b1d",
+                    "primary": "#0058bc",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "surface-container": "#f0edef",
+                    "on-surface-variant": "#414755",
+                    "surface-variant": "#e4e2e4",
+                    "on-secondary-fixed-variant": "#474649",
+                    "tertiary": "#5a5c5e",
+                    "surface-container-highest": "#e4e2e4",
+                    "on-tertiary-fixed-variant": "#454749",
+                    "outline": "#717786",
+                    "surface-container-high": "#eae7ea",
+                    "primary-container": "#0070eb",
+                    "on-primary-container": "#fefcff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter", "Noto Sans SC", "sans-serif"],
+                    "body": ["Inter", "Noto Sans SC", "sans-serif"],
+                    "label": ["Inter", "Noto Sans SC", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col overflow-hidden">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 left-0 w-full z-40 flex justify-between items-center px-6 py-4 bg-white/70 backdrop-blur-2xl">
+<span class="text-4xl font-light tracking-[0.2em] text-on-surface-variant opacity-80 uppercase">VOICEDANCE</span>
+<div class="flex items-center gap-4"></div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-24 px-6 max-w-7xl mx-auto pb-12 w-full">
+<!-- Header Section -->
+<header class="mb-12 space-y-2">
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface">视频库</h1>
+<p class="text-on-surface-variant max-w-md">最多支持上传3个视频</p>
+</header>
+<!-- Bento Style Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Video Card 1 -->
+<div class="group relative bg-surface-container-lowest rounded-[2rem] overflow-hidden flex flex-col">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD08seubdEJwJo4LD4yOdCaPMv5pmMZVawqSrrufIdfq26eCahA1mnZpHVMx6ItJ0d8H_j-87dIQEJTDJGHYnqr3dwz8L4PfozWDZHmnH4ijCWu6aaiWDQpyzAQzoaR2qx6NAJwXBR_eSJLsvcpSi1iab007nBMvWA1gIZ09bAG_nHaIa11qo0vzw-Mmku2koGShh5oS62jppJcgJ0H8lBnUVltEIWO1atBNvxRPVgEGDVAHIDoz1sgp50lLPBwA2mYSYrBD4h07c6p"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/40 to-transparent opacity-60"></div>
+<div class="absolute bottom-4 left-4 flex items-center gap-2">
+<span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-medium">04:32</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="text-xl font-bold tracking-tight mb-2">Contemporary Warm-up</h3>
+<p class="text-on-surface-variant text-sm mb-6">上传于 2023年10月12日</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex-grow flex items-center justify-center gap-2 bg-primary px-6 py-3 rounded-full text-on-primary font-bold text-sm">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+                        练习此视频
+                    </button>
+<button class="flex items-center justify-center p-3 rounded-full bg-surface-container-highest text-on-surface">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Video Card 2 -->
+<div class="group relative bg-surface-container-lowest rounded-[2rem] overflow-hidden flex flex-col">
+<div class="relative aspect-video overflow-hidden">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUvlQHPArGQq-UbQLpACnt44MJHbxBTzYpF_ZMhcVOLP8bgR_nYhsMG6buwV3bm8Us07B-PiTjUE1kU0htAfLQP8qWgywar4OAG6TXkinKyfRRqABZ34GWW6m-MCMxmp2o2z7CrV0lNz-6jUj_jg5SwRuP_h6HL4Lj-xOt0pOmTPo2wvE1ORpdq-rxj8CoTufWMRyrpQ_tZ_jCRAa61QlE5k9dq0dFdS0VF730UhzGY48ICyVfyN7efZCE69x6NjdiNSLpx2zySVT7"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/40 to-transparent opacity-60"></div>
+<div class="absolute bottom-4 left-4 flex items-center gap-2">
+<span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-medium">08:15</span>
+</div>
+</div>
+<div class="p-6 flex flex-col flex-grow justify-between">
+<div>
+<h3 class="text-xl font-bold tracking-tight mb-2">Urban Foundation</h3>
+<p class="text-on-surface-variant text-sm mb-6">上传于 2023年10月15日</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex-grow flex items-center justify-center gap-2 bg-primary px-6 py-3 rounded-full text-on-primary font-bold text-sm">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+                        练习此视频
+                    </button>
+<button class="flex items-center justify-center p-3 rounded-full bg-surface-container-highest text-on-surface">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Empty Upload Slot -->
+<div class="group relative bg-surface-container-low border-2 border-dashed border-outline-variant/30 rounded-[2rem] overflow-hidden flex flex-col items-center justify-center min-h-[320px] text-center p-8">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-3xl">add</span>
+</div>
+<h3 class="text-xl font-bold tracking-tight mb-2">上传视频</h3>
+<p class="text-on-surface-variant text-sm max-w-[200px]">仅支持MP4格式，文件大小不超过50M</p>
+</div>
+</div>
+</main>
+<!-- Overlay / Alert Box -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-on-background/10 backdrop-blur-[4px]">
+<div class="w-full max-w-md bg-white rounded-[2.5rem] shadow-[0_32px_80px_rgba(0,0,0,0.15)] border border-white/40 overflow-hidden transform scale-100">
+<div class="p-10 flex flex-col items-center text-center">
+<!-- Subtle Elegant Error Indicator -->
+<h3 class="text-xl font-bold text-on-surface mb-4 tracking-tight leading-snug px-2">
+                上传失败，请重新上传MP4格式的文件
+            </h3>
+<p class="text-on-surface-variant leading-relaxed text-sm px-4 opacity-80 font-medium">
+                当前文件格式不被支持。为了确保视频的最佳播放体验，请将您的视频转换为标准的 MP4 格式后重试。
+            </p>
+<div class="mt-10 w-full flex flex-col gap-3">
+<button class="w-full py-4 bg-primary text-on-primary rounded-full font-bold text-sm tracking-widest hover:brightness-105 transition-all shadow-lg shadow-primary/20">
+                    重新选择文件
+                </button>
+<button class="w-full py-4 bg-transparent text-on-surface-variant font-medium text-sm hover:bg-surface-container-high/50 rounded-full transition-all">
+                    取消上传
+                </button>
+</div>
+</div>
+<!-- Decorative line at bottom -->
+<div class="h-1 w-full bg-error/10 relative">
+<div class="absolute left-0 top-0 h-full w-full bg-error/30 opacity-20"></div>
+</div>
+</div>
+</div>
+<!-- Decorative Corner Element -->
+<div class="fixed bottom-12 right-12 flex items-center gap-4 text-on-surface-variant/30 select-none">
+<div class="text-right">
+<p class="text-[10px] font-bold tracking-widest uppercase">Storage Node</p>
+<p class="text-xs font-mono">0x4F2...A921</p>
+</div>
+<div class="w-px h-8 bg-current"></div>
+</div>
+</body></html>

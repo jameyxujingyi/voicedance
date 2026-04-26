@@ -1,0 +1,23 @@
+# Dependencies
+frontend/node_modules/
+backend/.venv/
+venv/
+env/
+
+# Build / cache
+frontend/dist/
+backend/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+frontend/.vite/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.log
+
+# Optional: keep repo small when sharing
+# frontend/node_modules/
+# backend/.venv/

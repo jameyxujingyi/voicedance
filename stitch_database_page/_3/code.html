@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>视频库 - 上传失败 (文件过大) - 最终版</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary": "#5f5e60",
+                    "tertiary-fixed": "#e2e2e4",
+                    "surface-bright": "#fcf8fb",
+                    "on-tertiary-fixed": "#1a1c1d",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#005bc1",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-secondary-fixed": "#1b1b1d",
+                    "tertiary-container": "#737576",
+                    "on-secondary-container": "#636264",
+                    "on-primary-fixed": "#001a41",
+                    "surface-container-low": "#f6f3f5",
+                    "on-primary": "#ffffff",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-container": "#e2dfe1",
+                    "surface": "#fcf8fb",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#adc6ff",
+                    "inverse-primary": "#adc6ff",
+                    "on-tertiary-container": "#fcfcfe",
+                    "on-error": "#ffffff",
+                    "surface-dim": "#dcd9dc",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f3f0f2",
+                    "tertiary-fixed-dim": "#c6c6c8",
+                    "outline-variant": "#c1c6d7",
+                    "on-background": "#1b1b1d",
+                    "secondary-fixed": "#e4e2e4",
+                    "inverse-surface": "#303032",
+                    "background": "#fcf8fb",
+                    "on-tertiary": "#ffffff",
+                    "on-surface": "#1b1b1d",
+                    "primary": "#0058bc",
+                    "secondary-fixed-dim": "#c8c6c8",
+                    "surface-container": "#f0edef",
+                    "on-surface-variant": "#414755",
+                    "surface-variant": "#e4e2e4",
+                    "on-secondary-fixed-variant": "#474649",
+                    "tertiary": "#5a5c5e",
+                    "surface-container-highest": "#e4e2e4",
+                    "on-tertiary-fixed-variant": "#454749",
+                    "outline": "#717786",
+                    "surface-container-high": "#eae7ea",
+                    "primary-container": "#0070eb",
+                    "on-primary-container": "#fefcff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter", "PingFang SC", "sans-serif"],
+                    "body": ["Inter", "PingFang SC", "sans-serif"],
+                    "label": ["Inter", "PingFang SC", "sans-serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', 'PingFang SC', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .modal-panel {
+            background: #ffffff;
+            box-shadow: 0 32px 64px -16px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col antialiased overflow-hidden">
+<!-- Top Navigation Bar (Header from SCREEN_22) -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-white/70 backdrop-blur-2xl">
+<span class="text-4xl font-light tracking-[0.2em] text-on-surface-variant opacity-80 uppercase">VOICEDANCE</span>
+<div class="flex items-center gap-4"></div>
+</nav>
+<!-- Background Content (Simulating SCREEN_19) -->
+<main class="pt-24 px-6 max-w-7xl mx-auto pb-12 w-full blur-sm pointer-events-none">
+<header class="mb-12 space-y-2">
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface">视频库</h1>
+<p class="text-on-surface-variant max-w-md">最多支持上传3个视频</p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Video Card 1 -->
+<div class="group relative bg-surface-container-lowest rounded-[2rem] overflow-hidden flex flex-col">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD08seubdEJwJo4LD4yOdCaPMv5pmMZVawqSrrufIdfq26eCahA1mnZpHVMx6ItJ0d8H_j-87dIQEJTDJGHYnqr3dwz8L4PfozWDZHmnH4ijCWu6aaiWDQpyzAQzoaR2qx6NAJwXBR_eSJLsvcpSi1iab007nBMvWA1gIZ09bAG_nHaIa11qo0vzw-Mmku2koGShh5oS62jppJcgJ0H8lBnUVltEIWO1atBNvxRPVgEGDVAHIDoz1sgp50lLPBwA2mYSYrBD4h07c6p"/>
+<div class="absolute bottom-4 left-4"><span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs">04:32</span></div>
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-2">Contemporary Warm-up</h3>
+<p class="text-on-surface-variant text-sm mb-6">上传于 2023年10月12日</p>
+<div class="flex gap-3">
+<div class="flex-grow bg-primary h-11 rounded-full"></div>
+<div class="w-11 h-11 bg-surface-container-highest rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Video Card 2 -->
+<div class="group relative bg-surface-container-lowest rounded-[2rem] overflow-hidden flex flex-col">
+<div class="relative aspect-video">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUvlQHPArGQq-UbQLpACnt44MJHbxBTzYpF_ZMhcVOLP8bgR_nYhsMG6buwV3bm8Us07B-PiTjUE1kU0htAfLQP8qWgywar4OAG6TXkinKyfRRqABZ34GWW6m-MCMxmp2o2z7CrV0lNz-6jUj_jg5SwRuP_h6HL4Lj-xOt0pOmTPo2wvE1ORpdq-rxj8CoTufWMRyrpQ_tZ_jCRAa61QlE5k9dq0dFdS0VF730UhzGY48ICyVfyN7efZCE69x6NjdiNSLpx2zySVT7"/>
+<div class="absolute bottom-4 left-4"><span class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs">08:15</span></div>
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-2">Urban Foundation</h3>
+<p class="text-on-surface-variant text-sm mb-6">上传于 2023年10月15日</p>
+<div class="flex gap-3">
+<div class="flex-grow bg-primary h-11 rounded-full"></div>
+<div class="w-11 h-11 bg-surface-container-highest rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Upload Slot -->
+<div class="bg-surface-container-low border-2 border-dashed border-outline-variant/30 rounded-[2rem] flex flex-col items-center justify-center min-h-[320px] p-8">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-primary text-3xl">add</span>
+</div>
+<h3 class="text-xl font-bold mb-2">上传视频</h3>
+<p class="text-on-surface-variant text-sm">仅支持MP4格式，文件大小不超过50M</p>
+</div>
+</div>
+</main>
+<!-- Fully Opaque Error Modal Overlay -->
+<div class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-on-background/10 backdrop-blur-md">
+<div class="modal-panel w-full max-w-md rounded-[2.5rem] border border-outline-variant/10 p-10 flex flex-col items-center text-center">
+<!-- Text Content Area -->
+<div class="flex flex-col items-center gap-2 mb-10">
+<h2 class="text-2xl font-bold text-on-surface">上传失败</h2>
+<p class="text-on-surface-variant leading-relaxed">
+                上传失败，视频过大，请上传50M以下的视频
+            </p>
+</div>
+<!-- Action Buttons -->
+<div class="w-full flex flex-col gap-3">
+<button class="w-full h-14 rounded-full bg-primary text-on-primary font-bold text-base shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">
+                重新选择文件
+            </button>
+<button class="w-full h-14 rounded-full bg-surface-container-highest text-on-surface font-semibold text-base hover:bg-surface-variant transition-colors">
+                取消
+            </button>
+</div>
+</div>
+</div>
+</body></html>
