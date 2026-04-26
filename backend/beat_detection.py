@@ -77,6 +77,8 @@ def _decode_video_to_wav(video_path: str, wav_path: str) -> None:
 def _load_audio(path: str, *, is_video: bool) -> AudioData:
     tmp_file: str | None = None
     try:
+        if is_video and not _which_ffmpeg():
+            raise FileNotFoundError("服务端未安装 ffmpeg，无法解析视频音轨。")
         if is_video and _which_ffmpeg():
             fd, tmp_file = tempfile.mkstemp(suffix=".wav", prefix="beat_audio_")
             os.close(fd)
@@ -264,7 +266,8 @@ def detect_8beat_timestamps(media_path: str, is_video: bool = False) -> List[Tup
     except subprocess.TimeoutExpired as e:
         raise RuntimeError(f"八拍分析失败：ffmpeg 处理超时（>{FFMPEG_TIMEOUT_SEC}s）。") from e
     except Exception as e:
-        raise RuntimeError(f"八拍分析失败：{e}") from e
+        detail = str(e).strip() or repr(e)
+        raise RuntimeError(f"八拍分析失败：{detail}") from e
     finally:
         if audio and audio.tmp_file and os.path.isfile(audio.tmp_file):
             try:
