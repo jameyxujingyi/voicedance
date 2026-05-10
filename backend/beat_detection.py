@@ -26,6 +26,8 @@ import numpy as np
 
 FFMPEG_TIMEOUT_SEC = 35
 BEATS_PER_PHRASE = 8
+# 与 beat_track 常用设定一致：固定采样率可显著缩短云端分析时间（sr=None 载入 48k 长音频会非常慢）
+TARGET_SR = 22050
 
 
 # ----------------------------- 音频读取 ---------------------------------------
@@ -56,9 +58,9 @@ def _load_audio(path: str, *, is_video: bool) -> tuple[np.ndarray, int, str | No
             fd, tmp_file = tempfile.mkstemp(suffix=".wav", prefix="beat_audio_")
             os.close(fd)
             _decode_video_to_wav(path, tmp_file)
-            y, sr = librosa.load(tmp_file, sr=None, mono=True)
+            y, sr = librosa.load(tmp_file, sr=TARGET_SR, mono=True, res_type='kaiser_fast')
         else:
-            y, sr = librosa.load(path, sr=None, mono=True)
+            y, sr = librosa.load(path, sr=TARGET_SR, mono=True, res_type='kaiser_fast')
         return y, int(sr), tmp_file
     except Exception:
         if tmp_file and os.path.isfile(tmp_file):
