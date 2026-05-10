@@ -1,29 +1,45 @@
-# 怎么跳都对 · 练舞助手
+# 怎么跳都对（VoiceDance）作品说明
 
-上传舞蹈视频，自动识别八拍，用中文语音控制播放（不用手拖进度条）。
+GitHub: `https://github.com/jameyxujingyi/voicedance`  
+Vercel: `https://voicedance.vercel.app`
 
-## 环境要求
+一个给自学舞蹈使用的网页应用：上传舞蹈视频后自动切分八拍，并用中文语音指令控制播放与循环，练舞时尽量不用手动拖进度条。
 
-- **Node.js** 18+（前端）  
-- **Python** 3.10+（后端，用于八拍分析）  
-- **ffmpeg**（后端分析视频用，macOS: `brew install ffmpeg`）
+## 项目做了什么
 
-## 发给朋友时发什么
+- 自动分析视频音轨并切分八拍区间
+- 支持中文语音指令（播放、暂停、快进、快退、倍速、循环等）
+- 支持手动循环拖拽、八拍跳转、镜像与全屏
+- 前后端分离部署：前端 Vite + React，后端 FastAPI + librosa + ffmpeg
 
-把整个项目文件夹打包（zip 等）发给他们即可。**不要**把下面这些打进去（太大且没必要）：
+## 技术栈
 
-- `frontend/node_modules/`
-- `backend` 里若有 `.venv`、`__pycache__`、`*.pyc`
+- 前端：React + TypeScript + Vite
+- 后端：FastAPI + Python
+- 音频分析：librosa、numpy、ffmpeg
+- 语音识别：Web Speech API
 
-对方拿到后按下面步骤安装依赖并运行即可。
+## 作品集提交建议（重点）
 
----
+建议提交 **`.zip`**，不要用 `.rar`（跨平台兼容更差）。
 
-## 运行步骤
+推荐压缩包结构：
 
-需要**开两个终端**，一个跑后端，一个跑前端。
+1. `README.md`（本文件，评审先看）
+2. `demo-url.txt`（只写线上地址，如 `https://voicedance.vercel.app`）
+3. 源码目录（`frontend/`、`backend/`）
 
-### 1. 启动后端（Python）
+不建议作为主提交格式：`.doc`、`.docx`、`.pdf`、`.jpg`（这些只能解释，不能运行项目）。
+
+## 本地运行（评审可复现）
+
+环境要求：
+
+- Node.js 18+
+- Python 3.10+
+- ffmpeg
+
+启动后端：
 
 ```bash
 cd backend
@@ -31,11 +47,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-看到 `Uvicorn running on http://127.0.0.1:8000` 即表示后端已启动。**不要关这个终端。**
-
-### 2. 启动前端（网页）
-
-**新开一个终端**，执行：
+启动前端（新开终端）：
 
 ```bash
 cd frontend
@@ -43,37 +55,14 @@ npm install
 npm run dev
 ```
 
-终端里会给出本地地址，一般是 `http://localhost:5173`。用浏览器打开这个地址即可使用。
+浏览器打开 `http://localhost:5173`。
 
-### 3. 使用方式
+## 线上地址（若已部署）
 
-1. 在网页里上传一段舞蹈视频。  
-2. 点击「自动识别八拍」，等待约 1–2 分钟。  
-3. 右侧会列出每个八拍的时间段，可点击「跳这个八拍」循环某一段。  
-4. 点击「开始语音指令」，用中文说：播放、暂停、快进、快退、慢一点、原速、两倍速、循环这个八拍 等。
+前端：`https://voicedance.vercel.app`  
+后端健康检查：`https://voicedance-production.up.railway.app/health`
 
----
+## 已知说明
 
-## 常见问题
-
-- **分析失败 / 无法连接后端**  
-  确保先在后端目录执行了 `pip install -r requirements.txt` 和 `uvicorn main:app --reload --port 8000`，且终端里没有报错。  
-- **分析很慢**  
-  八拍分析需要几十秒到一两分钟，属于正常，请耐心等待。  
-- **语音指令没反应**  
-  需使用支持 Web 语音识别的浏览器（如 Chrome），并允许麦克风权限。
-
----
-
-## 可选：打包成静态网页部署
-
-若只想在一台电脑上长期使用，可把前端打成静态文件，用浏览器直接打开（需同时在本机运行后端）：
-
-```bash
-cd frontend
-npm run build
-```
-
-生成在 `frontend/dist/`。用浏览器打开 `dist/index.html` 时，需保证后端在 `http://localhost:8000` 运行，且前端请求需能访问到该地址（本地用可把请求改为 `http://localhost:8000` 或通过简单静态服务器代理）。
-
-日常开发使用推荐直接 `npm run dev` + 后端 `uvicorn` 即可。
+- 八拍分析首次请求可能较慢（云端冷启动 + 音频处理耗时）
+- 若后端不可达，前端会回退为固定时长分段，保证可继续练习

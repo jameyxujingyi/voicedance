@@ -44,6 +44,69 @@ const API_BASE_URL = (RAW_API_BASE_URL
   : ''
 ).replace(/\/+$/, '')
 const ANALYZE_VIDEO_URL = API_BASE_URL ? `${API_BASE_URL}/analyze-video` : '/api/analyze-video'
+/** 云端八拍可能数分钟；过短会 Abort，过长则易被边缘断开，见 postAnalyzeWithRetry */
+const ANALYZE_FETCH_TIMEOUT_MS = 600_000
+
+/** Safari 等浏览器在跨域/HTTPS 混合内容/连接被断开时常报「Load failed」，与八拍算法无关 */
+function formatAnalyzeFetchError(e: unknown): string {
+  const msg = e instanceof Error ? e.message : String(e)
+  const lower = msg.toLowerCase()
+  if (e instanceof DOMException && e.name === 'AbortError') {
+    return '请求超时（已超过 10 分钟），可压缩/缩短视频后重试。'
+  }
+  if (
+    /load failed|failed to fetch|networkerror|network request failed|aborted|the user aborted a request/.test(
+      lower,
+    )
+  ) {
+    if (import.meta.env.PROD && !API_BASE_URL) {
+      return '线上未配置后端地址：请在 Vercel 设置环境变量 VITE_API_BASE_URL=https://你的Railway域名（勿省略 https），并重新部署。'
+    }
+    return (
+      `网络未到达分析服务（${msg}）。请在新标签打开后端「域名/health」确认在线；` +
+      `线上必须用 https；云端分析较慢时请多等片刻（已自动重试一次）；Safari 仍失败可换 Chrome；上传文件尽量小于 50MB。`
+    )
+  }
+  return msg
+}
+
+/** 跨域长连接偶发被断开时 Safari 报 Load failed，自动重试一次 */
+function isRetryableAnalyzeNetworkError(e: unknown): boolean {
+  if (e instanceof DOMException && e.name === 'AbortError') return false
+  const msg = (e instanceof Error ? e.message : String(e)).toLowerCase()
+  return /load failed|failed to fetch|networkerror|network request failed/.test(msg)
+}
+
+async function postAnalyzeWithRetry(url: string, formData: FormData): Promise<Response> {
+  let lastErr: unknown
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const controller = new AbortController()
+    const timeoutId = window.setTimeout(() => controller.abort(), ANALYZE_FETCH_TIMEOUT_MS)
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal,
+        mode: 'cors',
+        credentials: 'omit',
+        cache: 'no-store',
+      })
+      window.clearTimeout(timeoutId)
+      return res
+    } catch (e) {
+      window.clearTimeout(timeoutId)
+      lastErr = e
+      if (attempt === 0 && isRetryableAnalyzeNetworkError(e)) {
+        await new Promise<void>((r) => {
+          window.setTimeout(r, 2000)
+        })
+        continue
+      }
+      throw e
+    }
+  }
+  throw lastErr
+}
 
 /** 解析八拍分析接口失败时的响应体（兼容 FastAPI detail / 其它 message 字段与纯文本） */
 function parseAnalyzeErrorResponse(res: Response, raw: string): string {
@@ -162,6 +225,8 @@ function App() {
   const analyzedForUrlRef = useRef<string | null>(null)
   /** 每次发起新的分析递增，用于丢弃过期的异步结果 */
   const analysisGenRef = useRef(0)
+  /** 语音识别捕获到「开始说话」时的播放时间，用于循环八拍等指令对齐口令起点 */
+  const voiceAnchorTimeRef = useRef<number | null>(null)
 
   useEffect(() => {
     const id = getOrCreateDeviceId()
@@ -340,9 +405,13 @@ function App() {
         clearLoop(duration)
         break
       case 'loop_eight_beat': {
-        const current = video.currentTime
+        let anchor = voiceAnchorTimeRef.current
+        voiceAnchorTimeRef.current = null
+        if (anchor == null || !Number.isFinite(anchor)) anchor = video.currentTime
+        const dur = duration || video.duration || anchor
+        anchor = Math.max(0, Math.min(anchor, Number.isFinite(dur) && dur > 0 ? dur : anchor))
         const target =
-          segments.find((seg) => current >= seg.start && current <= seg.end) ?? segments[0]
+          segments.find((seg) => anchor >= seg.start && anchor <= seg.end) ?? segments[0]
         if (target) {
           applyLoopRange(target.start, target.end)
           seekVideoSafely(video, target.start)
@@ -352,7 +421,12 @@ function App() {
       }
       case 'loop_next_eight_beat': {
         if (segments.length === 0) break
-        const current = video.currentTime
+        let anchor = voiceAnchorTimeRef.current
+        voiceAnchorTimeRef.current = null
+        if (anchor == null || !Number.isFinite(anchor)) anchor = video.currentTime
+        const dur = duration || video.duration || anchor
+        anchor = Math.max(0, Math.min(anchor, Number.isFinite(dur) && dur > 0 ? dur : anchor))
+        const current = anchor
         let target: Segment | undefined
         for (let i = 0; i < segments.length; i += 1) {
           const seg = segments[i]
@@ -472,14 +546,7 @@ function App() {
       try {
         const formData = new FormData()
         formData.append('file', videoFile)
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 180000)
-        const res = await fetch(ANALYZE_VIDEO_URL, {
-          method: 'POST',
-          body: formData,
-          signal: controller.signal,
-        })
-        clearTimeout(timeoutId)
+        const res = await postAnalyzeWithRetry(ANALYZE_VIDEO_URL, formData)
         if (myGen !== analysisGenRef.current) return
 
         if (!res.ok) {
@@ -523,7 +590,7 @@ function App() {
         if (fallback.length > 0) {
           setSegments(fallback)
           setSegmentationMode('fallback-10s')
-          const msg = e instanceof Error && e.message ? e.message : ''
+          const msg = formatAnalyzeFetchError(e)
           setAnalysisNotice(
             msg
               ? `无法完成八拍分析（${msg}），已按每 10 秒自动分段。`
@@ -673,6 +740,11 @@ function App() {
     recognition.lang = 'zh-CN'
     recognition.continuous = true
     recognition.interimResults = false
+    recognition.onspeechstart = () => {
+      const v = videoRef.current
+      if (!v) return
+      voiceAnchorTimeRef.current = v.currentTime
+    }
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       const last = event.results[event.results.length - 1]
       const transcript = last[0].transcript.trim()
@@ -690,6 +762,7 @@ function App() {
   const toggleListening = () => {
     if (listening) {
       recognitionRef.current?.stop()
+      voiceAnchorTimeRef.current = null
       setListening(false)
       return
     }

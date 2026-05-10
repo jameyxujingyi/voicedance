@@ -11,6 +11,9 @@ interface SpeechRecognition extends EventTarget {
   onresult: ((event: SpeechRecognitionEvent) => void) | null
   onerror: ((event: Event) => void) | null
   onend: (() => void) | null
+  /** 检测到用户开始说话（用于记录指令对应的时间点，减轻识别延迟） */
+  onspeechstart: (() => void) | null
+  onsoundstart: (() => void) | null
 }
 
 interface SpeechRecognitionEvent extends Event {

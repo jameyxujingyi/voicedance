@@ -11,7 +11,7 @@ export default defineConfig({
         target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
-        timeout: 180000, // 八拍分析可能超过 2 分钟，3 分钟超时
+        timeout: 600000, // 与前端 analyze 超时一致，长视频在弱 CPU 上可能数分钟
       },
     },
   },
