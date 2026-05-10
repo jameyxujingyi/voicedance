@@ -46,6 +46,8 @@ const API_BASE_URL = (RAW_API_BASE_URL
 const ANALYZE_VIDEO_URL = API_BASE_URL ? `${API_BASE_URL}/analyze-video` : '/api/analyze-video'
 /** 云端八拍可能数分钟；过短会 Abort，过长则易被边缘断开，见 postAnalyzeWithRetry */
 const ANALYZE_FETCH_TIMEOUT_MS = 600_000
+/** 循环八拍选段时略往前偏，抵消识别与 speechstart 偏晚（秒） */
+const LOOP_VOICE_ANCHOR_BIAS_SEC = 0.35
 
 /** Safari 等浏览器在跨域/HTTPS 混合内容/连接被断开时常报「Load failed」，与八拍算法无关 */
 function formatAnalyzeFetchError(e: unknown): string {
@@ -410,6 +412,7 @@ function App() {
         if (anchor == null || !Number.isFinite(anchor)) anchor = video.currentTime
         const dur = duration || video.duration || anchor
         anchor = Math.max(0, Math.min(anchor, Number.isFinite(dur) && dur > 0 ? dur : anchor))
+        anchor = Math.max(0, anchor - LOOP_VOICE_ANCHOR_BIAS_SEC)
         const target =
           segments.find((seg) => anchor >= seg.start && anchor <= seg.end) ?? segments[0]
         if (target) {
@@ -426,6 +429,7 @@ function App() {
         if (anchor == null || !Number.isFinite(anchor)) anchor = video.currentTime
         const dur = duration || video.duration || anchor
         anchor = Math.max(0, Math.min(anchor, Number.isFinite(dur) && dur > 0 ? dur : anchor))
+        anchor = Math.max(0, anchor - LOOP_VOICE_ANCHOR_BIAS_SEC)
         const current = anchor
         let target: Segment | undefined
         for (let i = 0; i < segments.length; i += 1) {
@@ -729,34 +733,60 @@ function App() {
     return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
   }
 
-  const ensureRecognition = () => {
-    if (recognitionRef.current) return recognitionRef.current
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-    if (!SpeechRecognition) {
-      setError('当前浏览器不支持语音识别（需要 Chrome 等支持 Web Speech API 的浏览器）')
-      return null
-    }
-    const recognition: SpeechRecognition = new SpeechRecognition()
+  const bindRecognitionHandlers = (recognition: SpeechRecognition) => {
     recognition.lang = 'zh-CN'
     recognition.continuous = true
-    recognition.interimResults = false
+    recognition.interimResults = true
+
     recognition.onspeechstart = () => {
       const v = videoRef.current
       if (!v) return
       voiceAnchorTimeRef.current = v.currentTime
     }
+
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       const last = event.results[event.results.length - 1]
       const transcript = last[0].transcript.trim()
+
+      if (!last.isFinal && transcript.length > 0) {
+        const v = videoRef.current
+        if (v) {
+          const t = v.currentTime
+          voiceAnchorTimeRef.current =
+            voiceAnchorTimeRef.current == null || !Number.isFinite(voiceAnchorTimeRef.current)
+              ? t
+              : Math.min(voiceAnchorTimeRef.current, t)
+        }
+      }
+
+      if (!last.isFinal) return
+
+      if (!transcript) {
+        voiceAnchorTimeRef.current = null
+        return
+      }
       const action = processorRef.current.processCommand(transcript)
       if (action) {
         applyAction(action)
       }
+      voiceAnchorTimeRef.current = null
     }
+
     recognition.onerror = () => setListening(false)
     recognition.onend = () => setListening(false)
-    recognitionRef.current = recognition
-    return recognition
+  }
+
+  const ensureRecognition = () => {
+    const SpeechRecognitionCtor = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SpeechRecognitionCtor) {
+      setError('当前浏览器不支持语音识别（需要 Chrome 等支持 Web Speech API 的浏览器）')
+      return null
+    }
+    if (!recognitionRef.current) {
+      recognitionRef.current = new SpeechRecognitionCtor()
+    }
+    bindRecognitionHandlers(recognitionRef.current)
+    return recognitionRef.current
   }
 
   const toggleListening = () => {
